@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crime Rates</title>
+  </head>
+  <body>
+    <div class="banner"></div>
+    <header class="title">
+      <h1>Check crime rates in your area</h1>
+    </header>
+    <form action="" class="postcode">
+      <div class="inputBox">
+        <label for="postcode">
+          Postcode:
+          <input
+            name="postcode"
+            id="postcode"
+            type="text"
+            placeholder=" Your post code here"
+            required
+          />
+        </label>
+        <label for="date">
+          Date:
+          <input
+            type="month"
+            name="date"
+            id="date"
+            min="2017-01"
+            max="2020-01"
+            required
+          />
+        </label>
+      </div>
+      <button type="submit">Enter</button>
+    </form>
+    <div id="map"></div>
+    <div class="loader">
+      <h3>The content is loading...</h3>
+    </div>
+
+    <div class="banner"></div>
+  </body>
+
+  <script src="app.js"></script>
+  <script
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApyt224I8eHKHjNrZMZUZ6h5nCWm-0qus&callback=initMap"
+    type="text/javascript"
+  ></script>
+</html>
