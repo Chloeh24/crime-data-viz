@@ -1,3 +1,3 @@
 # Crime data viz project
 
-Using the met police api, visualise data using d3
+Fetching crime rates data from the [Police Data API](https://data.police.uk/docs/) and visualising it using d3
