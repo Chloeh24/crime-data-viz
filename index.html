@@ -3,12 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <link href="style.css" rel="stylesheet" />
+    <link href="styles.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crime Rates</title>
   </head>
   <body>
-    <div class="banner"></div>
     <header class="title">
       <h1>Check crime rates in your area</h1>
     </header>
@@ -42,15 +41,14 @@
     <div class="loader">
       <h3>The content is loading...</h3>
     </div>
-
-    <div class="banner"></div>
+    <div class="chart"></div>
   </body>
 
-  <script src="app.js"></script>
+  <script src="index.js"></script>
   <script
     async
     defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApyt224I8eHKHjNrZMZUZ6h5nCWm-0qus&callback=initMap"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKYeYcazAq0UFKyETzuhnuGFsoV8i54NE&callback=initMap"
     type="text/javascript"
   ></script>
 </html>

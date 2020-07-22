@@ -40,10 +40,10 @@ postcode.addEventListener("submit", (event) => {
         if (!crimes[item.category]) crimes[item.category] = 0;
         crimes[item.category] += 1;
       });
+      console.log(data);
     })
     .then(initMap)
     .then(toggleToNone)
-    .then(createSvgContent)
     .catch((error) => {
       console.log(error);
     });
@@ -57,6 +57,47 @@ function dealWithResponse(response) {
     throw new Error(response.status);
   }
   return response.json();
+}
+
+function render(data) {
+  let objectKeys = Object.keys(crimes);
+  let objectValues = Object.values(crimes);
+  let maxWidth = Math.max(...objectValues);
+  svg.setAttribute(
+    "viewBox",
+    `0 0 ${maxWidth + 200} ${21.5 * objectValues.length}`
+  );
+
+  var svgNS = "http://www.w3.org/2000/svg";
+  svgtitle.textContent = `Crime Statistics in ${postcodeValue.toUpperCase()}`;
+  const title = document.createElement("title");
+  title.textContent = `Crime Statistics in ${postcodeValue}`;
+  title.setAttribute("id", "title");
+  svg.appendChild(title);
+  let y = 0;
+  objectValues.forEach((value, index) => {
+    let g = document.createElementNS(svgNS, "g");
+    g.classList.add("bar");
+    let rect = document.createElementNS(svgNS, "rect");
+    rect.setAttribute("x", "0");
+    rect.setAttribute("y", y);
+    rect.setAttribute("width", value);
+    rect.setAttribute("height", "20px");
+    let text = document.createElementNS(svgNS, "text");
+    text.setAttribute("x", value + 10);
+    text.setAttribute("y", 10 + y);
+    text.setAttribute("dy", "0.35em");
+    text.setAttribute("class", "svgText");
+    text.textContent = `${objectKeys[index]} ${objectValues[index]}`;
+    y += 21;
+
+    g.appendChild(rect);
+    g.appendChild(text);
+
+    svg.appendChild(g);
+    textColor = document.querySelector("figcaption");
+    textColor.style.color = "white";
+  });
 }
 
 function initMap() {
@@ -434,49 +475,4 @@ function initMap() {
   });
 
   var marker = new google.maps.Marker({ position: yourArea, map: map });
-}
-
-function createSvgContent() {
-  while (svg.firstChild) {
-    svg.removeChild(svg.lastChild);
-  }
-
-  let objectKeys = Object.keys(crimes);
-  let objectValues = Object.values(crimes);
-  let maxWidth = Math.max(...objectValues);
-  svg.setAttribute(
-    "viewBox",
-    `0 0 ${maxWidth + 200} ${21.5 * objectValues.length}`
-  );
-
-  var svgNS = "http://www.w3.org/2000/svg";
-  svgtitle.textContent = `Crime Statistics in ${postcodeValue.toUpperCase()}`;
-  const title = document.createElement("title");
-  title.textContent = `Crime Statistics in ${postcodeValue}`;
-  title.setAttribute("id", "title");
-  svg.appendChild(title);
-  let y = 0;
-  objectValues.forEach((value, index) => {
-    let g = document.createElementNS(svgNS, "g");
-    g.classList.add("bar");
-    let rect = document.createElementNS(svgNS, "rect");
-    rect.setAttribute("x", "0");
-    rect.setAttribute("y", y);
-    rect.setAttribute("width", value);
-    rect.setAttribute("height", "20px");
-    let text = document.createElementNS(svgNS, "text");
-    text.setAttribute("x", value + 10);
-    text.setAttribute("y", 10 + y);
-    text.setAttribute("dy", "0.35em");
-    text.setAttribute("class", "svgText");
-    text.textContent = `${objectKeys[index]} ${objectValues[index]}`;
-    y += 21;
-
-    g.appendChild(rect);
-    g.appendChild(text);
-
-    svg.appendChild(g);
-    textColor = document.querySelector("figcaption");
-    textColor.style.color = "white";
-  });
 }
