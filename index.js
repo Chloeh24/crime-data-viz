@@ -1,14 +1,11 @@
 const postcode = document.querySelector(".postcode");
 const date = document.querySelector("[name=date]");
 const loader = document.querySelector(".loader");
-const svg = document.querySelector("svg");
-const svgtitle = document.querySelector("#svgTitle");
 
 let lat = 51.510357;
 let long = -0.116773;
 let zoom = 8;
 
-let crimes = {};
 let postcodeValue = "";
 
 n = new Date();
@@ -20,7 +17,6 @@ formDate.setAttribute("max", `${y}-0${m}`);
 
 postcode.addEventListener("submit", (event) => {
   loader.style.display = "block";
-  crimes = {};
   event.preventDefault();
   postcodeValue = event.target.elements.postcode.value;
   fetch(`https://api.postcodes.io/postcodes/${postcodeValue}`)
@@ -36,11 +32,20 @@ postcode.addEventListener("submit", (event) => {
     })
     .then(dealWithResponse)
     .then((data) => {
+      const crimeObj = {};
+
       data.forEach((item) => {
-        if (!crimes[item.category]) crimes[item.category] = 0;
-        crimes[item.category] += 1;
+        if (!crimeObj[item.category]) crimeObj[item.category] = 0;
+        crimeObj[item.category] += 1;
       });
-      console.log(data);
+
+      const crimeArr = Object.keys(crimeObj).map((crime) => ({
+        crime: crime,
+        number: crimeObj[crime],
+      }));
+
+      console.log(crimeArr);
+      render(crimeArr);
     })
     .then(initMap)
     .then(toggleToNone)
@@ -60,44 +65,63 @@ function dealWithResponse(response) {
 }
 
 function render(data) {
-  let objectKeys = Object.keys(crimes);
-  let objectValues = Object.values(crimes);
-  let maxWidth = Math.max(...objectValues);
-  svg.setAttribute(
-    "viewBox",
-    `0 0 ${maxWidth + 200} ${21.5 * objectValues.length}`
-  );
+  const svg = d3
+    .select("chart")
+    .append("svg")
+    .attr("width", 600 + "px") // decide size of the chart
+    .attr("height", 400 + "px")
+    .style("text-align", "right")
+    .style("color", "white");
 
-  var svgNS = "http://www.w3.org/2000/svg";
-  svgtitle.textContent = `Crime Statistics in ${postcodeValue.toUpperCase()}`;
-  const title = document.createElement("title");
-  title.textContent = `Crime Statistics in ${postcodeValue}`;
-  title.setAttribute("id", "title");
-  svg.appendChild(title);
-  let y = 0;
-  objectValues.forEach((value, index) => {
-    let g = document.createElementNS(svgNS, "g");
-    g.classList.add("bar");
-    let rect = document.createElementNS(svgNS, "rect");
-    rect.setAttribute("x", "0");
-    rect.setAttribute("y", y);
-    rect.setAttribute("width", value);
-    rect.setAttribute("height", "20px");
-    let text = document.createElementNS(svgNS, "text");
-    text.setAttribute("x", value + 10);
-    text.setAttribute("y", 10 + y);
-    text.setAttribute("dy", "0.35em");
-    text.setAttribute("class", "svgText");
-    text.textContent = `${objectKeys[index]} ${objectValues[index]}`;
-    y += 21;
+  const bar = svg
+    .append("g")
+    .style("background", "#d3d3d3") // set background color
+    .selectAll("rect") // decide what shape you want
+    .data(data) // define the data. In this case, the array of objects being passed into the function
+    .enter()
+    .append("rect") // create a new rectangle
+    .attr("x", (d) => x(d.crime))
+    .attr("y", (d) => y(d.number))
+    .style("width", 50 + "px")
+    .style("height", (d) => d.number * 20 + "px")
+    .text((d) => d.crime);
 
-    g.appendChild(rect);
-    g.appendChild(text);
+  // let maxWidth = Math.max(...objectValues);
+  // svg.setAttribute(
+  //   "viewBox",
+  //   `0 0 ${maxWidth + 200} ${21.5 * objectValues.length}`
+  // );
 
-    svg.appendChild(g);
-    textColor = document.querySelector("figcaption");
-    textColor.style.color = "white";
-  });
+  // var svgNS = "http://www.w3.org/2000/svg";
+  // svgtitle.textContent = `Crime Statistics in ${postcodeValue.toUpperCase()}`;
+  // const title = document.createElement("title");
+  // title.textContent = `Crime Statistics in ${postcodeValue}`;
+  // title.setAttribute("id", "title");
+  // svg.appendChild(title);
+  // let y = 0;
+  // objectValues.forEach((value, index) => {
+  //   let g = document.createElementNS(svgNS, "g");
+  //   g.classList.add("bar");
+  //   let rect = document.createElementNS(svgNS, "rect");
+  //   rect.setAttribute("x", "0");
+  //   rect.setAttribute("y", y);
+  //   rect.setAttribute("width", value);
+  //   rect.setAttribute("height", "20px");
+  //   let text = document.createElementNS(svgNS, "text");
+  //   text.setAttribute("x", value + 10);
+  //   text.setAttribute("y", 10 + y);
+  //   text.setAttribute("dy", "0.35em");
+  //   text.setAttribute("class", "svgText");
+  //   text.textContent = `${objectKeys[index]} ${objectValues[index]}`;
+  //   y += 21;
+
+  //   g.appendChild(rect);
+  //   g.appendChild(text);
+
+  //   svg.appendChild(g);
+  //   textColor = document.querySelector("figcaption");
+  //   textColor.style.color = "white";
+  // });
 }
 
 function initMap() {

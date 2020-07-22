@@ -159,39 +159,19 @@ button {
 /* start of the bar section */
 svg {
     width: 90vw;
+    background-color: white;
     /* height: 100vh; */
-}
-
-.bar {
-    fill: #aaa;
-    /* height: 21px; */
-    transition: fill .3s ease;
-    cursor: pointer;
-    font-family: Helvetica, sans-serif;
-
 }
 
 text {
     color: #000;
 }
 
-/* 
+
 rect {
-  background-color: red;
-  fill: red ;
-} */
-.bar:hover,
-.bar:focus {
-    fill: #F6D318;
+    background-color: red;
+    line-height: 20px;
 }
-
-figcaption {
-    font-weight: bold;
-    color: #000;
-    margin-bottom: 20px;
-}
-
-/* end of bar section */
 
 
 
